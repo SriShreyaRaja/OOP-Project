@@ -1,0 +1,40 @@
+@startuml
+title Workflow 1 — Employee reports → prioritised → assigned → notified
+autonumber
+actor Employee
+participant "REST API\n(Member 3)" as API
+participant ServiceDesk <<Facade>>
+participant IncidentFactory <<Factory>>
+participant DuplicateDetector
+participant CategoryRegistry
+participant PriorityStrategy <<Strategy>>
+participant AssignmentStrategy <<Strategy>>
+participant Incident
+participant EventBus <<Observer>>
+participant AuditLog
+participant NotificationService
+database StorageAdapter
+
+Employee -> API : POST /api/incidents
+API -> ServiceDesk : reportIncident(user, request)
+ServiceDesk -> IncidentFactory : create(...)
+IncidentFactory --> ServiceDesk : Incident (NEW)
+ServiceDesk -> DuplicateDetector : findDuplicates(open incidents)
+ServiceDesk -> CategoryRegistry : suggest(text)
+ServiceDesk -> Incident : classify(category)
+ServiceDesk -> PriorityStrategy : calculate(impact, urgency, service, users)
+PriorityStrategy --> ServiceDesk : P1 + explanation
+ServiceDesk -> Incident : applyPriority(P1, SLA policy)
+ServiceDesk -> AssignmentStrategy : select(incident, technicians)
+AssignmentStrategy --> ServiceDesk : best Candidate + reasons
+ServiceDesk -> Incident : assign(technician)
+ServiceDesk -> StorageAdapter : saveIncident(record)
+ServiceDesk -> Incident : pullEvents()
+loop each DomainEvent
+  ServiceDesk -> EventBus : publish(event)
+  EventBus -> AuditLog : onEvent
+  EventBus -> NotificationService : onEvent → in-app, email (+SMS if urgent)
+end
+ServiceDesk --> API : Incident
+API --> Employee : 201 Created + JSON
+@enduml

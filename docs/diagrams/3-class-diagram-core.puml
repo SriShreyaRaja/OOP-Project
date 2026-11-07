@@ -1,0 +1,107 @@
+@startuml
+title I-ITSM — Core Domain Model
+skinparam classAttributeIconSize 0
+skinparam classBackgroundColor #FFFFFF
+skinparam classBorderColor #3B5BA9
+hide empty members
+
+abstract class User {
+  - userId : String
+  - name : String
+  - email : String
+  - passwordHash : PasswordHash
+  - active : boolean
+  + {abstract} role() : Role
+  + {abstract} permissions() : Set<Permission>
+  + can(Permission) : boolean
+  + checkPassword(String) : boolean
+}
+class Employee {
+  - department : String
+}
+class Technician {
+  - skills : Map<String,Integer>
+  - activeIncidents : Map<String,Priority>
+  - maxWorkloadPoints : int
+  - yearsExperience : double
+  + workloadPoints() : int
+  + hasCapacityFor(Priority) : boolean
+  + takeIncident(id, Priority)
+}
+class TeamLead
+class Administrator
+class ITManager
+class SystemAccount
+class PasswordHash {
+  + matches(String) : boolean
+  + encode() : String
+}
+
+User <|-- Employee
+User <|-- Technician
+Technician <|-- TeamLead
+User <|-- Administrator
+Administrator <|-- ITManager
+Administrator <|-- SystemAccount
+User *-- PasswordHash
+
+class Incident {
+  - incidentId : String
+  - title : String
+  - impact : Impact
+  - urgency : Urgency
+  - priority : Priority
+  - category : String
+  - escalationLevel : int
+  + classify() / assign() / acknowledge()
+  + startWork() / requestInfo() / provideInfo()
+  + resolve() / verify() / reopen() / close()
+  + allowedActions() : List<Action>
+  + pullEvents() : List<DomainEvent>
+  + toRecord() : IncidentRecord
+}
+abstract class IncidentState {
+  + {abstract} name() : String
+  + classify() ... close() : IncidentState
+  + allowedActions() : List<Action>
+  + slaRunning() : boolean
+}
+class SLAClock {
+  - startedAt, pausedSince : Instant
+  - pausedTotal : Duration
+  + pause() / resume()
+  + status(Instant) : SLAStatus
+}
+class SLAPolicy <<record>> {
+  priority, responseTarget,
+  resolutionTarget, warningThreshold
+}
+class Note <<record>>
+class Resolution <<record>> {
+  description, rootCause,
+  preventiveAction
+}
+class Feedback <<record>> {
+  rating 1..5
+}
+class ITService {
+  - businessCriticality : int
+  - dependsOn : Set<String>
+}
+class ServiceCatalog {
+  + addDependency() «rejects cycles»
+  + upstreamOf() / downstreamOf()
+}
+
+Incident "0..*" --> "1" User : reporter
+Incident "0..*" --> "0..1" Technician : assignee
+Incident "0..*" --> "1" ITService : affects
+Incident o--> "1" IncidentState : current state
+Incident *-- "0..1" SLAClock
+Incident *-- "0..*" Note
+Incident *-- "0..*" Resolution
+Incident *-- "0..1" Feedback
+SLAClock --> SLAPolicy
+ServiceCatalog o-- "*" ITService
+ITService --> "0..*" ITService : depends on
+@enduml

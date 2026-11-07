@@ -1,0 +1,63 @@
+@startuml
+left to right direction
+skinparam packageStyle rectangle
+skinparam actorStyle awesome
+skinparam usecaseBackgroundColor #EEF4FF
+skinparam usecaseBorderColor #3B5BA9
+title I-ITSM — Use Case Diagram
+
+actor Employee as E
+actor Technician as T
+actor "Team Lead" as TL
+actor "Administrator /\nIT Manager" as A
+actor "Scheduler\n(every minute)" as S <<system>>
+TL -|> T
+
+rectangle "Intelligent IT Service Management System" {
+  usecase "Log in" as UC0
+  usecase "Report incident" as UC1
+  usecase "Auto-classify,\nprioritise & set SLA" as UC1a
+  usecase "Detect duplicates" as UC1b
+  usecase "Auto-assign technician" as UC1c
+  usecase "Track my incidents" as UC2
+  usecase "Answer info request" as UC3
+  usecase "Verify / reopen / give feedback" as UC4
+  usecase "View my queue & workload" as UC5
+  usecase "Acknowledge & investigate" as UC6
+  usecase "Add notes / request info" as UC7
+  usecase "Resolve with root cause" as UC8
+  usecase "Reassign / reassess" as UC9
+  usecase "Manage users, technicians,\nservices & categories" as UC10
+  usecase "Configure SLA, strategies,\nescalation" as UC11
+  usecase "Dashboards, reports,\nSLA violations, audit log" as UC12
+  usecase "Root-cause correlation &\nwhat-if simulation" as UC13
+  usecase "Monitor SLA, warn,\nescalate, auto-close" as UC14
+  usecase "Send notifications" as UC15
+}
+
+E --> UC0
+E --> UC1
+E --> UC2
+E --> UC3
+E --> UC4
+T --> UC0
+T --> UC5
+T --> UC6
+T --> UC7
+T --> UC8
+TL --> UC9
+A --> UC0
+A --> UC9
+A --> UC10
+A --> UC11
+A --> UC12
+A --> UC13
+S --> UC14
+
+UC1 ..> UC1a : <<include>>
+UC1 ..> UC1b : <<include>>
+UC1 ..> UC1c : <<include>>
+UC1c ..> UC15 : <<include>>
+UC14 ..> UC15 : <<include>>
+UC8 ..> UC15 : <<include>>
+@enduml

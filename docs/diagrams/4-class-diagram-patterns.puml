@@ -1,0 +1,98 @@
+@startuml
+title I-ITSM — Design Patterns (11)
+skinparam classAttributeIconSize 0
+hide empty members
+left to right direction
+skinparam dpi 130
+skinparam classBackgroundColor #FFFFFF
+skinparam classBorderColor #3B5BA9
+
+package "Facade" #F5F8FF {
+  class ServiceDesk {
+    + reportIncident(User, IncidentRequest)
+    + runMonitor() : MonitorResult
+    + search(User, SearchCriteria)
+    + attachStorage(StorageAdapter)
+  }
+}
+package "Builder" #F5F8FF {
+  class IncidentRequest <<record>>
+  class SearchCriteria
+}
+package "Strategy #1" #FFF8EE {
+  interface PriorityStrategy {
+    + calculate() : PriorityResult
+  }
+  class WeightedScorePriorityStrategy
+  class MatrixPriorityStrategy
+  PriorityStrategy <|.. WeightedScorePriorityStrategy
+  PriorityStrategy <|.. MatrixPriorityStrategy
+}
+package "Strategy #2 + Template Method" #FFF8EE {
+  abstract class AssignmentStrategy {
+    + rank() «template»
+    + select() : Candidate
+    # {abstract} score()
+  }
+  AssignmentStrategy <|-- SkillBasedAssignment
+  AssignmentStrategy <|-- LoadBasedAssignment
+  AssignmentStrategy <|-- RoundRobinAssignment
+  AssignmentStrategy <|-- PriorityBasedAssignment
+  AssignmentStrategy <|-- SmartRecommendationAssignment
+}
+package "Observer" #EEFFF2 {
+  class EventBus {
+    + subscribe()
+    + publish(DomainEvent)
+  }
+  interface EventObserver {
+    + onEvent(DomainEvent)
+  }
+  EventBus o-- "*" EventObserver
+  EventObserver <|.. AuditLog
+  EventObserver <|.. NotificationService
+}
+package "Adapter" #EEFFF2 {
+  interface NotificationChannel {
+    + send(Notification)
+  }
+  NotificationChannel <|.. InAppChannel
+  NotificationChannel <|.. EmailChannel
+  NotificationChannel <|.. SmsChannelAdapter
+  SmsChannelAdapter --> ThirdPartySmsGateway : adapts\ndispatchText()
+  NotificationService o-- "*" NotificationChannel
+}
+package "Chain of Responsibility" #FFEFEF {
+  class EscalationHandler {
+    + handle(Duration)
+    - next : EscalationHandler
+  }
+  EscalationHandler --> EscalationHandler : next
+  EscalationPolicy --> EscalationHandler
+}
+package "Factory" #F3EEFF {
+  class IncidentFactory
+  class UserFactory
+  class NotificationChannelFactory
+}
+package "Repository + Storage" #F3EEFF {
+  interface IncidentRepository
+  interface UserRepository
+  interface StorageAdapter <<Member 3 implements>>
+}
+package "State" #FFFBE6 {
+  abstract class IncidentState
+}
+
+ServiceDesk --> PriorityStrategy
+ServiceDesk --> AssignmentStrategy
+ServiceDesk --> EventBus
+ServiceDesk --> EscalationPolicy
+ServiceDesk --> IncidentFactory
+ServiceDesk --> IncidentRepository
+ServiceDesk --> UserRepository
+ServiceDesk --> StorageAdapter
+ServiceDesk ..> IncidentRequest
+ServiceDesk ..> SearchCriteria
+ServiceDesk ..> IncidentState
+@enduml
