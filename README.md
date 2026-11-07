@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # I-ITSM — Intelligent IT Service Management & Incident Resolution System
 
 CS F213 / MAC F212 OOP Project, Semester I 2026–27 · Java 17
@@ -59,3 +60,6 @@ i_itsm_java/
 ## Git workflow
 
 Work on your own branch (`feature/frontend`, `feature/api-db`, `feature/intelligence`), open a Pull Request into `main`, and have one teammate review it. Run the tests before every PR. The domain is in its own folder, so you won't edit the same files.
+=======
+# OOP-Project
+>>>>>>> e5ffc3449d9ab5b909ca0c2929315834e274dc10
