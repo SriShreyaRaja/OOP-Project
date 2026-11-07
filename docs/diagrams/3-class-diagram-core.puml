@@ -1,0 +1,109 @@
+@startuml
+title I-ITSM — Core Domain Model (Python)
+skinparam classAttributeIconSize 0
+skinparam classBackgroundColor #FFFFFF
+skinparam classBorderColor #3B5BA9
+hide empty members
+
+abstract class User <<ABC>> {
+  - _user_id : str
+  - _name : str
+  - _email : str
+  - _password_hash : PasswordHash
+  - _active : bool
+  + {abstract} role : Role
+  + {abstract} permissions : frozenset[Permission]
+  + can(permission) : bool
+  + check_password(password) : bool
+}
+class Employee {
+  - _department : str
+}
+class Technician {
+  - _skills : dict[str, int]
+  - _active_incidents : dict[str, Priority]
+  - _max_workload_points : int
+  - _years_experience : float
+  + workload_points : int
+  + has_capacity_for(priority) : bool
+  + take_incident(incident_id, priority)
+}
+class TeamLead
+class Administrator
+class ITManager
+class SystemAccount
+class PasswordHash {
+  + matches(password) : bool
+  + encode() : str
+}
+
+User <|-- Employee
+User <|-- Technician
+Technician <|-- TeamLead
+User <|-- Administrator
+Administrator <|-- ITManager
+Administrator <|-- SystemAccount
+User *-- PasswordHash
+
+class Incident {
+  - _incident_id : str
+  - _title : str
+  - _impact : Impact
+  - _urgency : Urgency
+  - _priority : Priority
+  - _category : str
+  - _escalation_level : int
+  + classify() / assign() / acknowledge()
+  + start_work() / request_info() / provide_info()
+  + resolve() / verify() / reopen() / close()
+  + allowed_actions() : list[Action]
+  + actions_for(viewer) : list[Action]
+  + pull_events() : list[DomainEvent]
+  + to_record() : IncidentRecord
+  + to_dict(now, viewer) : dict
+}
+abstract class IncidentState <<ABC>> {
+  + {abstract} name : str
+  + classify() ... close() : IncidentState
+  + allowed_actions() : list[Action]
+  + sla_running : bool
+}
+class SLAClock {
+  - _started_at, _paused_since : datetime
+  - _paused_total : timedelta
+  + pause() / resume()
+  + status(now) : SLAStatus
+}
+class SLAPolicy <<dataclass>> {
+  priority, response_target,
+  resolution_target, warning_threshold
+}
+class Note <<dataclass>>
+class Resolution <<dataclass>> {
+  description, root_cause,
+  preventive_action
+}
+class Feedback <<dataclass>> {
+  rating 1..5
+}
+class ITService {
+  - _business_criticality : int
+  - _depends_on : tuple[str]
+}
+class ServiceCatalog {
+  + add_dependency() «rejects cycles»
+  + upstream_of() / downstream_of()
+}
+
+Incident "0..*" --> "1" User : reporter
+Incident "0..*" --> "0..1" Technician : assignee
+Incident "0..*" --> "1" ITService : affects
+Incident o--> "1" IncidentState : current state
+Incident *-- "0..1" SLAClock
+Incident *-- "0..*" Note
+Incident *-- "0..*" Resolution
+Incident *-- "0..1" Feedback
+SLAClock --> SLAPolicy
+ServiceCatalog o-- "*" ITService
+ITService --> "0..*" ITService : depends on
+@enduml

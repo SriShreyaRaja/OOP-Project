@@ -1,0 +1,2 @@
+# The domain layer itself uses only the Python standard library (Python 3.10+).
+pytest>=7.0

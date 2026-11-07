@@ -1,0 +1,27 @@
+@startuml
+title I-ITSM — Layered Architecture (Python)
+skinparam componentStyle rectangle
+skinparam rectangleBackgroundColor #F5F8FF
+skinparam rectangleBorderColor #3B5BA9
+
+rectangle "Presentation (Member 1)\nEmployee portal · Technician workspace · Admin dashboard" as UI
+rectangle "REST API (Member 3)\nFastAPI routes · login tokens · background SLA monitor\nITSMError → HTTP status" as API
+rectangle "Domain Layer (Member 2) — pure Python, standard library only" as DOM {
+  rectangle "ServiceDesk (Facade)" as SD
+  rectangle "Incident + State pattern\nSLA clock · Users & roles" as CORE
+  rectangle "Strategies\npriority · assignment" as STR
+  rectangle "Events (Observer)\naudit · notifications (Adapter)" as EVT
+  rectangle "Intelligence (Member 4 can upgrade)\nduplicates · correlation · SLA risk\nwhat-if · suggested fixes · escalation" as AI
+}
+rectangle "Persistence (Member 3)\nStorageAdapter → sqlite3" as PERS
+database "SQLite database\n(itsm.db)" as DB
+
+UI --> API : HTTPS + JSON
+API --> SD : method calls
+SD --> CORE
+SD --> STR
+SD --> EVT
+SD --> AI
+SD --> PERS : save_…() / load_…()
+PERS --> DB
+@enduml
