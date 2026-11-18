@@ -1,12 +1,16 @@
-# The domain layer itself uses only the Python standard library (Python 3.10+).
-pytest>=7.0
 
+# FastAPI Backend
+fastapi>=0.115.0
+uvicorn[standard]>=0.30.0
 
-# Existing testing library
-pytest>=7.0
+# JWT Authentication
+PyJWT>=2.9.0
 
-# Backend API
-fastapi
-uvicorn
-httpx
+# Request Validation
+pydantic>=2.9.0
+
+# API and Database Testing
+httpx>=0.27.0
+pytest>=8.0.0
+
 
