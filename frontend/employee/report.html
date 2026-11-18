@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Report Incident</title>
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body class="theme-employee">
+  <nav>
+    <div><strong>I-ITSM Employee Portal</strong></div>
+    <div>
+      <a href="home.html">My Incidents</a>
+      <a href="report.html">+ Report Incident</a>
+      <a href="../index.html">Logout</a>
+    </div>
+  </nav>
+  <div class="container">
+    <h2>Report a New Incident</h2>
+    <label>Title</label><input id="title" placeholder="e.g. Payment application unavailable">
+    <label>Description</label><textarea id="desc" rows="4"></textarea>
+    <label>Affected Service</label><select id="serviceId"><option value="">-- Optional --</option></select>
+    <label>Category (leave blank for auto-categorization)</label><select id="category"><option value="">-- Auto Detect --</option></select>
+    <label>Impact</label>
+    <select id="impact">
+      <option value="LOW">LOW</option>
+      <option value="MEDIUM">MEDIUM</option>
+      <option value="HIGH">HIGH</option>
+      <option value="ORGANIZATION">ORGANIZATION</option>
+    </select>
+    <label>Urgency</label>
+    <select id="urgency">
+      <option value="LOW">LOW</option>
+      <option value="MEDIUM">MEDIUM</option>
+      <option value="HIGH">HIGH</option>
+      <option value="CRITICAL">CRITICAL</option>
+    </select>
+    <label>Affected Users</label><input type="number" id="users" value="1">
+    <button onclick="submitIncident()">Submit Incident</button>
+  </div>
+  <script src="../js/api.js"></script>
+  <script>
+    apiGet("/services", "services.json").then(list => {
+      list.forEach(s => serviceId.innerHTML += `<option value="${s.serviceId}">${s.name}</option>`);
+    });
+    apiGet("/categories", "categories.json").then(list => {
+      list.forEach(c => category.innerHTML += `<option value="${c}">${c}</option>`);
+    });
+    async function submitIncident() {
+      try {
+        const body = {
+          title: title.value,
+          description: desc.value,
+          serviceId: serviceId.value || null,
+          impact: impact.value,
+          urgency: urgency.value,
+          affectedUsers: Number(users.value),
+          category: category.value || null
+        };
+        await apiPost("/incidents", body);
+        location.href = "home.html";
+      } catch (e) {
+        alert(`${e.error || "Error"}: ${e.message}`);
+      }
+    }
+  </script>
+</body>
+</html>

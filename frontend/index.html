@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>I-ITSM Login</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div class="container" style="max-width: 400px; margin-top: 80px;">
+    <h2>I-ITSM Portal Login</h2>
+    <label>Email</label>
+    <input type="email" id="email" value="ravi@corp.in">
+    <label>Password</label>
+    <input type="password" id="password" value="Passw0rd!">
+    <label>Mock Role (used only when USE_MOCK = true)</label>
+    <select id="mockRole">
+      <option value="EMPLOYEE">Employee</option>
+      <option value="TECHNICIAN">Technician</option>
+      <option value="ADMIN">Admin</option>
+    </select>
+    <button onclick="login()">Sign In</button>
+  </div>
+  <script src="js/api.js"></script>
+  <script>
+    async function login() {
+      try {
+        const email = document.getElementById("email").value;
+        const password = document.getElementById("password").value;
+        const data = await apiPost("/auth/login", { email, password }, "mock/login.json");
+        sessionStorage.setItem("token", data.token);
+        const role = USE_MOCK ? document.getElementById("mockRole").value : data.user.role;
+        sessionStorage.setItem("role", role);
+        if (role === "EMPLOYEE") location.href = "employee/home.html";
+        else if (role === "TECHNICIAN") location.href = "technician/queue.html";
+        else location.href = "admin/dashboard.html";
+      } catch (e) {
+        alert(`${e.error || "Login Failed"}: ${e.message || ""}`);
+      }
+    }
+  </script>
+</body>
+</html>

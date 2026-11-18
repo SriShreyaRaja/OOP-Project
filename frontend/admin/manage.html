@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Manage System</title>
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body class="theme-admin">
+  <nav>
+    <div><strong>I-ITSM Admin Console</strong></div>
+    <div>
+      <a href="dashboard.html">Dashboard</a>
+      <a href="search.html">Search & Audit</a>
+      <a href="manage.html">Manage System</a>
+      <a href="../index.html">Logout</a>
+    </div>
+  </nav>
+  <div class="container">
+    <h2>Admin Strategy Controls</h2>
+    <div class="card">
+      <h3>Assignment Strategy</h3>
+      <select id="assignStrat">
+        <option value="smart">Smart Recommendation</option>
+        <option value="skill">Most Skilled</option>
+        <option value="load">Least Busy (Load)</option>
+        <option value="round_robin">Round Robin</option>
+        <option value="priority">By Priority</option>
+      </select>
+      <button onclick="apiPut('/admin/strategies/assignment', { name: assignStrat.value })">Save Assignment Strategy</button>
+    </div>
+    <div class="card">
+      <h3>Priority Calculation Strategy</h3>
+      <select id="prioStrat">
+        <option value="weighted">Weighted Formula</option>
+        <option value="matrix">Impact/Urgency Matrix</option>
+      </select>
+      <button onclick="apiPut('/admin/strategies/priority', { name: prioStrat.value })">Save Priority Strategy</button>
+    </div>
+  </div>
+  <script src="../js/api.js"></script>
+</body>
+</html>

@@ -1,0 +1,4 @@
+[
+  { "timestamp": "2026-11-07 10:00 IST", "actor": "E101", "action": "REPORTED", "details": "Created INC1001" },
+  { "timestamp": "2026-11-07 10:00 IST", "actor": "SYSTEM", "action": "ASSIGNED", "details": "Assigned to T201" }
+]

@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Technician Queue</title>
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body class="theme-technician">
+  <nav>
+    <div><strong>I-ITSM Technician Workspace</strong></div>
+    <div>
+      <a href="queue.html">My Queue</a>
+      <a href="../index.html">Logout</a>
+    </div>
+  </nav>
+  <div class="container">
+    <div id="workload" class="card"></div>
+    <h2>Assigned Queue</h2>
+    <div id="queue">Loading...</div>
+  </div>
+  <script src="../js/api.js"></script>
+  <script>
+    apiGet("/technician/me", "technician-me.json").then(me => {
+      document.getElementById("workload").innerHTML = `
+        <strong>Technician:</strong> ${me.name} | <strong>Workload:</strong> ${me.workloadPoints} / ${me.maxWorkloadPoints} pts
+        <button style="float:right;" onclick="apiPost('/technician/availability', { available: ${!me.available} })">
+          Status: ${me.available ? "Available (Click to Pause)" : "Unavailable (Click to Resume)"}
+        </button>
+      `;
+    });
+    apiGet("/technician/queue", "technician-queue.json").then(list => {
+      document.getElementById("queue").innerHTML = list.map(inc => `
+        <div class="card">
+          <span class="badge ${inc.priority}">${inc.priority}</span> <strong>${inc.incidentId}: ${inc.title}</strong> (${inc.status})
+          <div class="sla-box">SLA: ${inc.sla.status} (${inc.sla.minutesRemaining}m)</div><br><br>
+          <a href="investigate.html?id=${inc.incidentId}">Open Investigation Workspace →</a>
+        </div>
+      `).join("");
+    });
+  </script>
+</body>
+</html>

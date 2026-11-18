@@ -1,0 +1,9 @@
+{
+  "token": "mock-token-999",
+  "user": {
+    "userId": "E101",
+    "name": "Ravi Kumar",
+    "email": "ravi@corp.in",
+    "role": "EMPLOYEE"
+  }
+}

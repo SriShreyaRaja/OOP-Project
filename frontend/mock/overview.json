@@ -1,0 +1,13 @@
+{
+  "totalIncidents": 1,
+  "openIncidents": 1,
+  "criticalOpen": 1,
+  "resolvedIncidents": 0,
+  "slaViolations": 0,
+  "slaCompliancePercent": 100.0,
+  "meanTimeToAcknowledgeMinutes": 0.0,
+  "meanTimeToResolveMinutes": 0.0,
+  "averageFeedback": null,
+  "byStatus": { "ASSIGNED": 1 },
+  "byPriority": { "P1": 1 }
+}

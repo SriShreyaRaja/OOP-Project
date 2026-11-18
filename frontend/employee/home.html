@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>My Incidents</title>
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body class="theme-employee">
+  <nav>
+    <div><strong>I-ITSM Employee Portal</strong></div>
+    <div>
+      <a href="home.html">My Incidents</a>
+      <a href="report.html">+ Report Incident</a>
+      <a href="../index.html">Logout</a>
+    </div>
+  </nav>
+  <div class="container">
+    <h2>My Reported Incidents</h2>
+    <div id="list">Loading...</div>
+  </div>
+  <script src="../js/api.js"></script>
+  <script>
+    apiGet("/incidents/mine", "my-incidents.json").then(items => {
+      document.getElementById("list").innerHTML = items.map(inc => `
+        <div class="card">
+          <span class="badge ${inc.priority}">${inc.priority}</span>
+          <strong>${inc.incidentId}: ${inc.title}</strong> (${inc.status})
+          <div class="why-box"><strong>Why ${inc.priority}?</strong> ${formatWhyP1(inc.priorityExplanation)}</div>
+          <div class="sla-box">SLA: ${inc.sla?.status} (${inc.sla?.minutesRemaining}m left)</div><br><br>
+          <a href="details.html?id=${inc.incidentId}">View Details & Actions →</a>
+        </div>
+      `).join("");
+    });
+  </script>
+</body>
+</html>

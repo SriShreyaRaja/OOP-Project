@@ -1,0 +1,18 @@
+body { font-family: Arial, sans-serif; margin: 0; background: #f4f6f9; color: #222; }
+nav { padding: 14px 24px; color: white; display: flex; justify-content: space-between; align-items: center; }
+nav a { color: white; text-decoration: none; margin-left: 16px; font-weight: bold; }
+.theme-employee nav { background: #1d4ed8; }
+.theme-technician nav { background: #15803d; }
+.theme-admin nav { background: #6d28d9; }
+.container { max-width: 1000px; margin: 24px auto; background: white; padding: 22px; border-radius: 8px; box-shadow: 0 2px 6px rgba(0,0,0,0.08); }
+.card { border: 1px solid #ddd; padding: 14px; margin-bottom: 12px; border-radius: 6px; }
+.badge { padding: 3px 8px; border-radius: 4px; color: white; font-size: 12px; font-weight: bold; }
+.P1 { background: #dc2626; }
+.P2 { background: #ea580c; }
+.P3 { background: #2563eb; }
+.P4 { background: #6b7280; }
+.why-box { background: #fef3c7; border-left: 4px solid #f59e0b; padding: 10px; margin: 10px 0; font-size: 14px; }
+.sla-box { background: #e0f2fe; padding: 6px 10px; border-radius: 4px; display: inline-block; font-weight: bold; font-size: 13px; }
+button { padding: 8px 14px; margin: 4px 4px 4px 0; border: none; border-radius: 4px; cursor: pointer; background: #334155; color: white; }
+button:hover { opacity: 0.9; }
+input, select, textarea { width: 100%; padding: 8px; margin: 5px 0 12px 0; box-sizing: border-box; }

@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Search & Audit</title>
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body class="theme-admin">
+  <nav>
+    <div><strong>I-ITSM Admin Console</strong></div>
+    <div>
+      <a href="dashboard.html">Dashboard</a>
+      <a href="search.html">Search & Audit</a>
+      <a href="manage.html">Manage System</a>
+      <a href="../index.html">Logout</a>
+    </div>
+  </nav>
+  <div class="container">
+    <h2>Search Incidents (5 Filters)</h2>
+    <div style="display:grid; grid-template-columns: repeat(5, 1fr); gap:10px;">
+      <input id="q" placeholder="Keyword">
+      <select id="priority"><option value="">Priority</option><option>P1</option><option>P2</option><option>P3</option><option>P4</option></select>
+      <select id="status"><option value="">Status</option><option>NEW</option><option>ASSIGNED</option><option>IN_PROGRESS</option><option>RESOLVED</option><option>CLOSED</option></select>
+      <select id="category"><option value="">Category</option><option>APPLICATION</option><option>NETWORK</option><option>HARDWARE</option><option>SOFTWARE</option></select>
+      <input id="technician" placeholder="Tech ID (T201)">
+    </div>
+    <button onclick="runSearch()">Filter</button>
+    <div id="results"></div>
+    <h3>Audit Trail (INC1001)</h3>
+    <div id="audit"></div>
+  </div>
+  <script src="../js/api.js"></script>
+  <script>
+    function runSearch() {
+      const qs = `q=${q.value}&priority=${priority.value}&status=${status.value}&category=${category.value}&technician=${technician.value}`;
+      apiGet(`/incidents?${qs}`, "my-incidents.json").then(list => {
+        document.getElementById("results").innerHTML = list.map(i => `
+          <div class="card">
+            <span class="badge ${i.priority}">${i.priority}</span> <strong>${i.incidentId}</strong>: ${i.title} (${i.status})
+            <div id="act-${i.incidentId}"></div>
+          </div>
+        `).join("");
+        list.forEach(i => renderActionButtons(`act-${i.incidentId}`, i.incidentId, i.yourActions));
+      });
+    }
+    runSearch();
+    apiGet("/incidents/INC1001/audit", "audit.json").then(logs => {
+      document.getElementById("audit").innerHTML = logs.map(l => `<div class="card">${l.timestamp} — <strong>${l.actor}</strong> [${l.action}]: ${l.details}</div>`).join("");
+    });
+  </script>
+</body>
+</html>
