@@ -1,0 +1,10 @@
+[
+  {
+    "incidentId": "INC1001",
+    "title": "Payment application unavailable",
+    "priority": "P1",
+    "status": "ASSIGNED",
+    "sla": { "status": "ON_TRACK", "minutesRemaining": 30, "paused": false },
+    "yourActions": ["ACKNOWLEDGE"]
+  }
+]

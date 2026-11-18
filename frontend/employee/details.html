@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Incident Details</title>
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body class="theme-employee">
+  <nav>
+    <div><strong>I-ITSM Employee Portal</strong></div>
+    <div>
+      <a href="home.html">My Incidents</a>
+      <a href="report.html">+ Report Incident</a>
+      <a href="../index.html">Logout</a>
+    </div>
+  </nav>
+  <div class="container" id="content">Loading...</div>
+  <script src="../js/api.js"></script>
+  <script>
+    const id = new URLSearchParams(location.search).get("id") || "INC1001";
+    Promise.all([
+      apiGet(`/incidents/${id}`, "incident.json"),
+      apiGet(`/incidents/${id}/notes`, "notes.json")
+    ]).then(([inc, notes]) => {
+      document.getElementById("content").innerHTML = `
+        <span class="badge ${inc.priority}">${inc.priority}</span> <h2>${inc.incidentId}: ${inc.title}</h2>
+        <p><strong>Status:</strong> ${inc.status} | <strong>Service:</strong> ${inc.serviceName || "N/A"} | <strong>Category:</strong> ${inc.category}</p>
+        <p>${inc.description}</p>
+        <div class="why-box"><strong>Why ${inc.priority}?</strong> ${formatWhyP1(inc.priorityExplanation)}</div>
+        <div class="sla-box">SLA: ${inc.sla.status} (${inc.sla.minutesRemaining}m left ${inc.sla.paused ? "- PAUSED" : ""})</div>
+        <h3>Available Actions</h3>
+        <div id="actions"></div>
+        <h3>Give Feedback (when Resolved/Closed)</h3>
+        <input type="number" id="rating" min="1" max="5" value="5" style="width:80px;">
+        <input id="fbComment" placeholder="Feedback comment..." style="width:60%;">
+        <button onclick="sendFeedback()">Submit Rating</button>
+        <h3>Comments / Notes</h3>
+        ${notes.map(n => `<div class="card"><strong>${n.authorName || n.author || "User"}:</strong> ${n.text}</div>`).join("")}
+        <textarea id="noteText" placeholder="Add a reply..."></textarea>
+        <button onclick="addNote()">Post Note</button>
+      `;
+      renderActionButtons("actions", inc.incidentId, inc.yourActions);
+    });
+
+    async function addNote() {
+      await apiPost(`/incidents/${id}/notes`, { text: noteText.value, internal: false });
+      location.reload();
+    }
+    async function sendFeedback() {
+      try {
+        await apiPost(`/incidents/${id}/feedback`, { rating: Number(rating.value), comment: fbComment.value });
+        location.reload();
+      } catch (e) { alert(`${e.error}: ${e.message}`); }
+    }
+  </script>
+</body>
+</html>

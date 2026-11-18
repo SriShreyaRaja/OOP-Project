@@ -1,0 +1,30 @@
+[
+  {
+    "incidentId": "INC1001",
+    "title": "Payment application unavailable",
+    "category": "APPLICATION",
+    "priority": "P1",
+    "status": "ASSIGNED",
+    "sla": { "status": "ON_TRACK", "minutesRemaining": 30, "paused": false },
+    "priorityExplanation": {
+      "formula": "Impact × Urgency × Criticality × UserBoost",
+      "score": 102.2,
+      "result": "P1 - Critical"
+    },
+    "yourActions": ["PROVIDE_INFO", "REOPEN"]
+  },
+  {
+    "incidentId": "INC1002",
+    "title": "Laptop docking station not charging",
+    "category": "HARDWARE",
+    "priority": "P3",
+    "status": "RESOLVED",
+    "sla": { "status": "MET", "minutesRemaining": 140, "paused": false },
+    "priorityExplanation": {
+      "formula": "Impact × Urgency × Criticality × UserBoost",
+      "score": 12.0,
+      "result": "P3 - Medium"
+    },
+    "yourActions": ["VERIFY", "REOPEN", "CLOSE"]
+  }
+]

@@ -1,0 +1,5 @@
+[
+  { "serviceId": "SVC-PAY", "name": "Payment Application" },
+  { "serviceId": "SVC-VPN", "name": "Corporate VPN" },
+  { "serviceId": "SVC-MAIL", "name": "Enterprise Email" }
+]

@@ -1,0 +1,11 @@
+[
+  {
+    "technicianId": "T201",
+    "name": "Tara AppSupport",
+    "activeIncidents": 1,
+    "workloadPoints": 8,
+    "maxPoints": 20,
+    "resolved": 0,
+    "available": true
+  }
+]

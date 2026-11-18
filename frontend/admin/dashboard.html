@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Admin Dashboard</title>
+  <link rel="stylesheet" href="../css/style.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body class="theme-admin">
+  <nav>
+    <div><strong>I-ITSM Admin Console</strong></div>
+    <div>
+      <a href="dashboard.html">Dashboard</a>
+      <a href="search.html">Search & Audit</a>
+      <a href="manage.html">Manage System</a>
+      <a href="../index.html">Logout</a>
+    </div>
+  </nav>
+  <div class="container">
+    <h2>System Overview</h2>
+    <div id="kpis" class="card"></div>
+    <h3>Technician Workload Chart</h3>
+    <canvas id="workloadChart" height="100"></canvas>
+  </div>
+  <script src="../js/api.js"></script>
+  <script>
+    apiGet("/reports/overview", "overview.json").then(o => {
+      document.getElementById("kpis").innerHTML = `
+        <strong>Total:</strong> ${o.totalIncidents} |
+        <strong>Open:</strong> ${o.openIncidents} (${o.criticalOpen} Critical) |
+        <strong>Resolved:</strong> ${o.resolvedIncidents} |
+        <strong>SLA Violations:</strong> ${o.slaViolations} (${o.slaCompliancePercent}% Compliance)
+      `;
+    });
+    apiGet("/reports/workload", "workload.json").then(w => {
+      new Chart(document.getElementById("workloadChart"), {
+        type: "bar",
+        data: {
+          labels: w.map(x => x.name),
+          datasets: [{ label: "Workload Points", data: w.map(x => x.workloadPoints), backgroundColor: "#6d28d9" }]
+        }
+      });
+    });
+  </script>
+</body>
+</html>

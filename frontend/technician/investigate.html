@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Investigate Incident</title>
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body class="theme-technician">
+  <nav>
+    <div><strong>I-ITSM Technician Workspace</strong></div>
+    <div>
+      <a href="queue.html">My Queue</a>
+      <a href="../index.html">Logout</a>
+    </div>
+  </nav>
+  <div class="container" id="work">Loading...</div>
+  <script src="../js/api.js"></script>
+  <script>
+    const id = new URLSearchParams(location.search).get("id") || "INC1001";
+    Promise.all([
+      apiGet(`/incidents/${id}`, "incident.json"),
+      apiGet(`/incidents/${id}/notes`, "notes.json")
+    ]).then(([inc, notes]) => {
+      document.getElementById("work").innerHTML = `
+        <span class="badge ${inc.priority}">${inc.priority}</span> <h2>${inc.incidentId}: ${inc.title}</h2>
+        <p><strong>Status:</strong> ${inc.status} | <strong>Service:</strong> ${inc.serviceName || "N/A"}</p>
+        <div class="why-box">
+          <strong>Why ${inc.priority}?</strong> ${formatWhyP1(inc.priorityExplanation)}<br>
+          <strong>Assignment Reason:</strong> ${inc.assignmentReason || "N/A"}
+        </div>
+        <div class="sla-box">SLA: ${inc.sla.status} (${inc.sla.minutesRemaining}m left)</div>
+        <h3>Technician Actions</h3>
+        <div id="actions"></div>
+        <h3>Investigation Notes</h3>
+        ${notes.map(n => `<div class="card"><strong>${n.authorName || n.author || "Staff"}:</strong> ${n.text} ${n.internal ? "<em>(Internal)</em>" : ""}</div>`).join("")}
+        <textarea id="noteText" placeholder="Add investigation note..."></textarea>
+        <label style="display:inline;"><input type="checkbox" id="isInternal" style="width:auto;"> Internal staff-only note</label><br>
+        <button onclick="addNote()">Save Note</button>
+      `;
+      renderActionButtons("actions", inc.incidentId, inc.yourActions);
+    });
+
+    async function addNote() {
+      await apiPost(`/incidents/${id}/notes`, { text: noteText.value, internal: isInternal.checked });
+      location.reload();
+    }
+  </script>
+</body>
+</html>
