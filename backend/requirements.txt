@@ -9,4 +9,5 @@ pytest>=7.0
 fastapi
 uvicorn
 httpx
+PyJWT>=2.8.0
 
