@@ -1,4 +1,4 @@
-const USE_MOCK = true; // Flip to false on Connect Day
+const USE_MOCK = false; // Flip to false on Connect Day
 const API_BASE = "http://localhost:8000/api";
 
 async function apiGet(path, mockFile) {
