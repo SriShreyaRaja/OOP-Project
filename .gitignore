@@ -9,3 +9,6 @@ venv/
 .idea/
 .vscode/
 .DS_Store
+*.db-wal
+*.db-shm
+*.sqlite3
